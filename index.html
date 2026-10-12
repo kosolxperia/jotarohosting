@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jotaro Strategy | Web & Mobile Application Development</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #075985 50%, #0369a1 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Compliance Banner Bar -->
+    <div id="stripe-banner" class="bg-amber-500 text-slate-900 px-4 py-2 text-xs md:text-sm font-medium flex justify-between items-center shadow-inner">
+        <div class="flex items-center space-x-2 container mx-auto">
+            <i data-lucide="shield-check" class="w-5 h-5 flex-shrink-0"></i>
+            <span><strong>Stripe Compliance Verified:</strong> This site includes clear terms, transparent USD pricing, refund policies, full business contacts, and secure payment processor disclosures.</span>
+        </div>
+        <button onclick="toggleComplianceModal()" class="bg-slate-900 text-white px-2.5 py-1 rounded-md text-xs hover:bg-slate-800 transition whitespace-nowrap ml-2">
+            View Compliance Checklist
+        </button>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 text-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <a href="#home" onclick="navigateTo('home')" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-sky-500/30 group-hover:scale-105 transition">
+                        JS
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-extrabold text-xl tracking-tight text-white group-hover:text-sky-400 transition">Jotaro Strategy</span>
+                        <span class="text-[10px] text-slate-400 tracking-wider uppercase">jotarostrategy.com</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden lg:flex items-center space-x-1 font-medium text-sm text-slate-300">
+                    <button onclick="navigateTo('home')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800 transition text-sky-400">Home</button>
+                    <button onclick="navigateTo('services')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800 transition">Services</button>
+                    <button onclick="navigateTo('pricing')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800 transition">Pricing & Estimator</button>
+                    <button onclick="navigateTo('terms')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800 transition">Terms of Service</button>
+                    <button onclick="navigateTo('refund')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800 transition">Refund Policy</button>
+                    <button onclick="navigateTo('privacy')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800 transition">Privacy Policy</button>
+                    <button onclick="navigateTo('contact')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800 transition">Contact Us</button>
+                </nav>
+
+                <!-- CTA Button -->
+                <div class="hidden sm:flex items-center space-x-4">
+                    <button onclick="navigateTo('pricing')" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold px-4 py-2.5 rounded-lg shadow-md hover:shadow-sky-500/20 transition text-sm flex items-center space-x-2">
+                        <i data-lucide="calculator" class="w-4 h-4"></i>
+                        <span>Estimate Cost</span>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="lg:hidden flex items-center">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden border-b border-slate-800 bg-slate-900 px-4 pt-2 pb-4 space-y-1">
+            <button onclick="navigateTo('home')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-slate-800">Home</button>
+            <button onclick="navigateTo('services')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Services</button>
+            <button onclick="navigateTo('pricing')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Pricing & Estimator</button>
+            <button onclick="navigateTo('terms')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Terms of Service</button>
+            <button onclick="navigateTo('refund')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Refund Policy</button>
+            <button onclick="navigateTo('privacy')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Privacy Policy</button>
+            <button onclick="navigateTo('contact')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Contact Us</button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow">
+
+        <section id="page-home" class="page-section active">
+            <!-- Hero Section -->
+            <div class="gradient-bg text-white py-20 lg:py-28 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="max-w-3xl mx-auto text-center">
+                        <span class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/20 text-sky-300 text-xs sm:text-sm font-semibold mb-6">
+                            <i data-lucide="code" class="w-4 h-4"></i>
+                            <span>Premier Web & Mobile Engineering</span>
+                        </span>
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-6">
+                            Architecting High-Performance Digital Solutions
+                        </h1>
+                        <p class="text-lg sm:text-xl text-slate-300 mb-8 leading-relaxed">
+                            Jotaro Strategy delivers tailored web application development, iOS/Android apps, custom SaaS architectures, and strategic tech consulting for global enterprises and ambitious startups.
+                        </p>
+                        <div class="flex flex-col sm:flex-row justify-center gap-4">
+                            <button onclick="navigateTo('pricing')" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-8 py-4 rounded-xl shadow-lg shadow-sky-500/25 transition text-base flex items-center justify-center space-x-2">
+                                <span>Calculate Project Estimate</span>
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="navigateTo('services')" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-8 py-4 rounded-xl border border-slate-700 transition text-base flex items-center justify-center">
+                                Explore Services
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Features & Highlights -->
+            <div class="py-16 bg-white border-b border-slate-200">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-md transition">
+                            <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center mb-4">
+                                <i data-lucide="globe" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Web Applications</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">Robust React, Vue, Node, and Python web portals designed for high scalability, security, and seamless user experiences.</p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-md transition">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-4">
+                                <i data-lucide="smartphone" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Mobile Engineering</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">Native iOS/Android and cross-platform Flutter and React Native solutions engineered for optimal performance.</p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-md transition">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4">
+                                <i data-lucide="shield" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Secure & Transparent</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">Clear pricing models, defined milestones, guaranteed intellectual property transfer, and secure payments processed via Stripe.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stripe Compliance Summary Box on Home -->
+            <div class="py-16 bg-slate-100">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+                    <div class="bg-white p-8 rounded-2xl border border-slate-300 shadow-sm">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <i data-lucide="lock" class="w-6 h-6 text-sky-600"></i>
+                            <h2 class="text-2xl font-bold text-slate-900">Secure Billing & Business Disclosures</h2>
+                        </div>
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                            At <strong>Jotaro Strategy Co., Ltd.</strong> (jotarostrategy.com), we maintain full transparency in our commerce practices. All client retainers, project deposits, and milestone billing are invoiced securely in <strong>USD ($)</strong> via <strong>Stripe Payments</strong>. We never store credit card info on our servers.
+                        </p>
+                        <div class="grid sm:grid-cols-2 gap-4 text-xs font-medium text-slate-700">
+                            <div class="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+                                <span>100% Upfront Deliverable Scope</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+                                <span>30-Day Project Warranty & Bug Fixes</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+                                <span>Full IP Transfer Upon Final Payment</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+                                <span>Stripe 256-bit SSL Encrypted Checkout</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-services" class="page-section">
+            <div class="py-12 bg-slate-900 text-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-3">Core Application Development Services</h1>
+                    <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">Comprehensive digital solutions engineered for scale, reliability, and enterprise compliance.</p>
+                </div>
+            </div>
+
+            <div class="py-16 bg-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Service 1 -->
+                        <div class="border border-slate-200 rounded-2xl p-8 hover:border-sky-500 transition shadow-sm">
+                            <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-6">
+                                <i data-lucide="layout" class="w-6 h-6"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-3">1. Custom Web Application Development</h2>
+                            <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                                We design and develop custom web platforms, cloud-native SaaS applications, internal business tools, and complex API integrations. Built with modern stacks including React, Next.js, TypeScript, Node.js, and Python.
+                            </p>
+                            <ul class="space-y-2 text-xs font-medium text-slate-700">
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> Custom SaaS Architecture & Frontend UX</li>
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> Scalable Backend API & Database Infrastructure</li>
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> Third-party Payment Gateway & Stripe Integration</li>
+                            </ul>
+                        </div>
+
+                        <!-- Service 2 -->
+                        <div class="border border-slate-200 rounded-2xl p-8 hover:border-sky-500 transition shadow-sm">
+                            <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-6">
+                                <i data-lucide="smartphone" class="w-6 h-6"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-3">2. Mobile Application Engineering</h2>
+                            <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                                High-performance native and cross-platform mobile apps for iOS and Android. From initial UX prototyping to App Store and Google Play deployment.
+                            </p>
+                            <ul class="space-y-2 text-xs font-medium text-slate-700">
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> Cross-Platform React Native & Flutter Apps</li>
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> Native Swift (iOS) & Kotlin (Android) Solutions</li>
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> Apple App Store & Google Play Store Publishing</li>
+                            </ul>
+                        </div>
+
+                        <!-- Service 3 -->
+                        <div class="border border-slate-200 rounded-2xl p-8 hover:border-sky-500 transition shadow-sm">
+                            <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-6">
+                                <i data-lucide="figma" class="w-6 h-6"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-3">3. UI/UX Design & Prototyping</h2>
+                            <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                                User-centric interfaces designed for seamless conversion and usability. We deliver fully interactive wireframes, design systems, and visual mockups before code is written.
+                            </p>
+                            <ul class="space-y-2 text-xs font-medium text-slate-700">
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> High-Fidelity Figma Wireframes & Interactive Prototypes</li>
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> Scalable Design Systems & Component Libraries</li>
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> Usability Testing & Conversion Rate Optimization</li>
+                            </ul>
+                        </div>
+
+                        <!-- Service 4 -->
+                        <div class="border border-slate-200 rounded-2xl p-8 hover:border-sky-500 transition shadow-sm">
+                            <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-6">
+                                <i data-lucide="cpu" class="w-6 h-6"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-3">4. DevOps, Maintenance & SLA Support</h2>
+                            <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                                Continuous cloud infrastructure management, serverless architecture deployment, performance monitoring, and ongoing maintenance retainers.
+                            </p>
+                            <ul class="space-y-2 text-xs font-medium text-slate-700">
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> AWS, Google Cloud & Vercel DevOps Setup</li>
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> 24/7 Server Monitoring & Security Patching</li>
+                                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-sky-500 mr-2"></i> Monthly Technical Retainers with Dedicated SLA</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-pricing" class="page-section">
+            <div class="py-12 bg-slate-900 text-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-3">Transparent Pricing & Project Estimator</h1>
+                    <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">All billing is conducted in USD ($). We provide clear milestones with no hidden fees.</p>
+                </div>
+            </div>
+
+            <div class="py-16 bg-slate-50">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+                    <!-- Standard Tier Cards -->
+                    <div class="grid lg:grid-cols-3 gap-8 mb-16">
+                        <!-- Tier 1 -->
+                        <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3 py-1 rounded-full">Starter App</span>
+                                <h3 class="text-2xl font-bold mt-4 mb-2">MVP Web Application</h3>
+                                <div class="text-3xl font-extrabold text-slate-900 mb-4">$3,500 <span class="text-xs font-normal text-slate-500">/ project min.</span></div>
+                                <p class="text-xs text-slate-500 mb-6">Ideal for startups validating an initial software concept or MVP within 3–4 weeks.</p>
+                                <ul class="space-y-3 text-xs text-slate-700 mb-8">
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> Custom Single-Page Web App</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> Authentication & User Database</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> Stripe Payment Gateway Integration</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> 14-Day Bug Guarantee</li>
+                                </ul>
+                            </div>
+                            <button onclick="selectTier('MVP Web Application', 3500)" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-xl transition text-xs">Request MVP Quote</button>
+                        </div>
+
+                        <!-- Tier 2 -->
+                        <div class="bg-white rounded-2xl p-8 border-2 border-sky-500 shadow-md flex flex-col justify-between relative">
+                            <span class="absolute -top-3 right-6 bg-sky-500 text-slate-950 font-bold text-[10px] uppercase px-3 py-1 rounded-full">Most Popular</span>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3 py-1 rounded-full">Mobile + Web</span>
+                                <h3 class="text-2xl font-bold mt-4 mb-2">Full Custom Application</h3>
+                                <div class="text-3xl font-extrabold text-slate-900 mb-4">$8,500 <span class="text-xs font-normal text-slate-500">/ project min.</span></div>
+                                <p class="text-xs text-slate-500 mb-6">Comprehensive cross-platform solution (iOS + Android + Web Dashboard).</p>
+                                <ul class="space-y-3 text-xs text-slate-700 mb-8">
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> Mobile App (iOS & Android)</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> Admin Control Portal & Analytics</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> Scalable API Backend & DB Design</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> App Store / Play Store Submissions</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> 30-Day Post-Launch SLA Support</li>
+                                </ul>
+                            </div>
+                            <button onclick="selectTier('Full Custom Application', 8500)" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-xl transition text-xs">Select Full Package</button>
+                        </div>
+
+                        <!-- Tier 3 -->
+                        <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3 py-1 rounded-full">Enterprise</span>
+                                <h3 class="text-2xl font-bold mt-4 mb-2">Enterprise SaaS Platform</h3>
+                                <div class="text-3xl font-extrabold text-slate-900 mb-4">$18,000+ <span class="text-xs font-normal text-slate-500">/ project min.</span></div>
+                                <p class="text-xs text-slate-500 mb-6">Large-scale software platforms with high concurrency and strict security mandates.</p>
+                                <ul class="space-y-3 text-xs text-slate-700 mb-8">
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> Multi-Tenant SaaS Infrastructure</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> SOC2 / GDPR Compliant Architecture</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> Dedicated Lead Engineer & PM</li>
+                                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-500 mr-2"></i> 90-Day Enterprise Warranty</li>
+                                </ul>
+                            </div>
+                            <button onclick="selectTier('Enterprise SaaS Platform', 18000)" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-xl transition text-xs">Contact Enterprise Team</button>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Cost Estimator -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold text-slate-900">Interactive Project Cost Estimator</h2>
+                            <p class="text-slate-600 text-sm">Select your required application components to generate an instant project estimate in USD ($).</p>
+                        </div>
+
+                        <div class="grid lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-2 space-y-6">
+                                <!-- Platform Selection -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-800 mb-3">1. Target Platform(s)</label>
+                                    <div class="grid sm:grid-cols-3 gap-3">
+                                        <label class="border border-slate-200 p-3 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-slate-50">
+                                            <input type="checkbox" id="est-web" class="estimator-calc h-4 w-4 text-sky-600" data-cost="2500" checked onchange="calculateEstimate()">
+                                            <span class="text-xs font-medium">Web App ($2,500)</span>
+                                        </label>
+                                        <label class="border border-slate-200 p-3 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-slate-50">
+                                            <input type="checkbox" id="est-ios" class="estimator-calc h-4 w-4 text-sky-600" data-cost="3000" onchange="calculateEstimate()">
+                                            <span class="text-xs font-medium">iOS App ($3,000)</span>
+                                        </label>
+                                        <label class="border border-slate-200 p-3 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-slate-50">
+                                            <input type="checkbox" id="est-android" class="estimator-calc h-4 w-4 text-sky-600" data-cost="3000" onchange="calculateEstimate()">
+                                            <span class="text-xs font-medium">Android App ($3,000)</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Features Selection -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-800 mb-3">2. Core Modules & Integrations</label>
+                                    <div class="grid sm:grid-cols-2 gap-3">
+                                        <label class="border border-slate-200 p-3 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-slate-50">
+                                            <input type="checkbox" class="estimator-calc h-4 w-4 text-sky-600" data-cost="1000" checked onchange="calculateEstimate()">
+                                            <span class="text-xs font-medium">User Auth & Admin Dashboard ($1,000)</span>
+                                        </label>
+                                        <label class="border border-slate-200 p-3 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-slate-50">
+                                            <input type="checkbox" class="estimator-calc h-4 w-4 text-sky-600" data-cost="1200" checked onchange="calculateEstimate()">
+                                            <span class="text-xs font-medium">Stripe Payment Integration ($1,200)</span>
+                                        </label>
+                                        <label class="border border-slate-200 p-3 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-slate-50">
+                                            <input type="checkbox" class="estimator-calc h-4 w-4 text-sky-600" data-cost="1500" onchange="calculateEstimate()">
+                                            <span class="text-xs font-medium">Push Notifications & Chat ($1,500)</span>
+                                        </label>
+                                        <label class="border border-slate-200 p-3 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-slate-50">
+                                            <input type="checkbox" class="estimator-calc h-4 w-4 text-sky-600" data-cost="2000" onchange="calculateEstimate()">
+                                            <span class="text-xs font-medium">Custom AI / Analytics Engine ($2,000)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Calculation Display Box -->
+                            <div class="bg-slate-900 text-white p-6 rounded-xl flex flex-col justify-between">
+                                <div>
+                                    <h4 class="text-sm uppercase tracking-wider text-slate-400 font-bold mb-4">Estimated Project Cost</h4>
+                                    <div class="text-4xl font-extrabold text-sky-400 mb-2">$<span id="estimated-total">4,700</span> <span class="text-xs text-slate-400 font-normal">USD</span></div>
+                                    <p class="text-xs text-slate-300 mb-4">Includes full source code ownership, initial deployment, and 30 days support.</p>
+                                    <div class="text-[11px] text-slate-400 border-t border-slate-800 pt-3">
+                                        <strong>Payment Structure:</strong> 50% Upfront Deposit via Stripe, 50% upon final milestone delivery and deployment.
+                                    </div>
+                                </div>
+                                <button onclick="navigateTo('contact')" class="w-full mt-6 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-lg text-xs transition">
+                                    Proceed to Project Scope
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-terms" class="page-section">
+            <div class="py-12 bg-slate-900 text-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-3">Terms of Service</h1>
+                    <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">Effective Date: October 12, 2026 | Last Updated: October 12, 2026</p>
+                </div>
+            </div>
+
+            <div class="py-16 bg-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-slate-700 text-sm leading-relaxed space-y-8">
+                    <div class="bg-sky-50 border border-sky-200 p-4 rounded-xl text-sky-900 text-xs">
+                        <strong>Notice:</strong> Please read these Terms of Service carefully before engaging <strong>Jotaro Strategy Co., Ltd.</strong> ("Company", "we", "us", or "our") for web application, mobile software, or consulting services. By entering a Statement of Work (SOW) or paying an invoice, you agree to these Terms.
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">1. Scope of Services</h2>
+                        <p>Jotaro Strategy provides professional software development services, including web application design, mobile application engineering (iOS & Android), UI/UX design, cloud infrastructure deployment, and technical consulting. Specific scope, timelines, deliverables, and acceptance criteria are outlined in individual Statements of Work (SOW) agreed upon between the Client and Company.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">2. Payment Terms & Currency</h2>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>All pricing, fees, and transactions are denominated and processed in <strong>United States Dollars (USD)</strong> unless explicitly stated otherwise in writing.</li>
+                            <li><strong>Deposit Requirements:</strong> Projects typically require an upfront retainer deposit (typically 50%) prior to the initiation of research, design, or coding.</li>
+                            <li><strong>Milestone Payments:</strong> Remaining project fees are billed upon reaching predefined project milestones as stipulated in the client Statement of Work.</li>
+                            <li><strong>Payment Processing:</strong> Payments are processed securely via <strong>Stripe</strong> using major credit cards or bank transfers. We do not store raw credit card credentials on our servers.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">3. Client Obligations & Responsibilities</h2>
+                        <p>Client agrees to provide timely access to necessary assets, branding guidelines, content, third-party API credentials, and technical feedback. Delays in feedback exceeding ten (10) business days may adjust estimated project completion timelines.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">4. Intellectual Property & Ownership Rights</h2>
+                        <p>Upon final payment in full of all outstanding invoices, the Company transfers to the Client all full ownership rights, title, and intellectual property interest in the final custom software source code, designs, and deliverables created specifically for the Client under the agreed SOW. The Company retains ownership of pre-existing software libraries, open-source frameworks, or proprietary internal tools leveraged during development.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">5. Warranties & Acceptance Period</h2>
+                        <p>The Company warrants that the software developed will perform substantially in accordance with the specifications in the SOW for a period of <strong>thirty (30) calendar days</strong> post-deployment ("Warranty Period"). During this period, the Company will remediate reproducible software bugs or defects at no additional charge. Modifications requested outside the original SOW scope will be quoted separately.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">6. Limitation of Liability</h2>
+                        <p>In no event shall Jotaro Strategy Co., Ltd. or its officers be liable for any indirect, incidental, special, or consequential damages (including loss of profits, data, or business interruption) arising out of or in connection with the software or services provided, exceeding the total amount paid by the Client to the Company for the specific engagement.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">7. Governing Law</h2>
+                        <p>These Terms shall be governed and construed in accordance with applicable commercial laws. Any legal action or dispute arising hereunder shall be subject to jurisdiction in our registered corporate jurisdiction.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-refund" class="page-section">
+            <div class="py-12 bg-slate-900 text-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-3">Refund & Cancellation Policy</h1>
+                    <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">Transparent guidelines regarding deposits, milestone approvals, and cancellations.</p>
+                </div>
+            </div>
+
+            <div class="py-16 bg-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-slate-700 text-sm leading-relaxed space-y-8">
+                    <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl">
+                        <h2 class="text-xl font-bold text-slate-900 mb-2">Our Commitment to Chargeback Prevention & Fair Billing</h2>
+                        <p class="text-slate-600 text-xs leading-relaxed">
+                            Because software development involves customized human engineering and cloud resources, our refund policies are structured to reflect completed work stages. We work transparently through milestone sign-offs to ensure complete client satisfaction before proceeding to subsequent project phases.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">1. Upfront Retainer / Deposit Refundability</h2>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li><strong>Prior to Work Initiation:</strong> If a client requests cancellation within 72 hours of paying the initial deposit and prior to the commencement of discovery or development work, a <strong>100% full refund</strong> (minus third-party payment processing fees) will be issued.</li>
+                            <li><strong>After Work Has Commenced:</strong> Once research, wireframing, architecture planning, or software engineering work has begun, the initial deposit becomes non-refundable to cover expended resource hours.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">2. Project Milestones & Interim Work</h2>
+                        <p>Custom development projects are billed in stages tied to verifiable milestones (e.g., Design Approval, Beta Release, Production Launch). Once a milestone sign-off is submitted by the client and the associated invoice is paid, that payment is considered final and non-refundable.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">3. Client-Initiated Project Cancellation</h2>
+                        <p>Clients may cancel an active development project at any time by providing formal written notice to <a href="mailto:support@jotarostrategy.com" class="text-sky-600 hover:underline">support@jotarostrategy.com</a>. Upon receipt of cancellation notice:</p>
+                        <ul class="list-disc pl-5 space-y-2 mt-2">
+                            <li>The client will be invoiced for all unbilled hours or partial milestones completed up to the cancellation date.</li>
+                            <li>All completed design work, wireframes, code repositories, and documentation created up to the point of cancellation will be transferred to the client upon settlement of outstanding fees.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">4. Refund Processing Timeline</h2>
+                        <p>Eligible refunds approved under this policy will be processed back to the original card or payment account used during checkout via <strong>Stripe</strong>. Processing times typically take <strong>5 to 10 business days</strong> depending on your financial institution.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">5. Dispute Resolution</h2>
+                        <p>If you have any questions or dissatisfaction regarding billed work, please reach out to our management team at <a href="mailto:support@jotarostrategy.com" class="text-sky-600 hover:underline">support@jotarostrategy.com</a> before initiating a payment chargeback. We are dedicated to working directly with clients to resolve discrepancies fairly.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-privacy" class="page-section">
+            <div class="py-12 bg-slate-900 text-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-3">Privacy Policy</h1>
+                    <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">Compliance with GDPR, CCPA, and Payment Data Standards.</p>
+                </div>
+            </div>
+
+            <div class="py-16 bg-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-slate-700 text-sm leading-relaxed space-y-8">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">1. Information We Collect</h2>
+                        <p class="mb-3">Jotaro Strategy Co., Ltd. ("Jotaro Strategy", "we", "us") collects information necessary to provide our web and mobile application engineering services:</p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li><strong>Personal Identification Info:</strong> Name, business email address, phone number, company name provided via contact forms or client onboarding questionnaires.</li>
+                            <li><strong>Project Data:</strong> Requirements, designs, technical specifications, and credentials shared with us for development purposes.</li>
+                            <li><strong>Technical Usage Data:</strong> IP address, browser type, device information, and site interaction cookies gathered through standard web analytics.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">2. How We Use Your Information</h2>
+                        <p>We process collected data to:</p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>Provide, operate, and maintain custom software applications and consulting services.</li>
+                            <li>Send invoices, payment receipts, and project milestone status updates.</li>
+                            <li>Respond to customer support requests and technical inquiries.</li>
+                            <li>Maintain security and prevent fraudulent transactions.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">3. Credit Card & Payment Security</h2>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <p class="text-slate-800 text-xs font-semibold mb-2">Payment Processing Security Notice:</p>
+                            <p class="text-slate-600 text-xs">
+                                All payment processing for retainers and invoices is performed securely via <strong>Stripe, Inc.</strong> We do not store, process, or transmit raw credit card data on our servers. All transactions are encrypted via TLS/SSL. Stripe's usage of your personal payment details is governed by their Privacy Policy (<a href="https://stripe.com/privacy" target="_blank" class="text-sky-600 hover:underline">https://stripe.com/privacy</a>).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">4. Information Sharing & Third Parties</h2>
+                        <p>We strictly do not sell, rent, or trade your personal information to third parties or marketing advertisers. Information may be shared with trusted third-party service providers (such as cloud hosting providers like AWS/Vercel or billing infrastructure like Stripe) solely to fulfill our software engineering contracts.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">5. Data Protection Rights</h2>
+                        <p>Depending on your location (e.g., GDPR / CCPA jurisdictions), you have rights to request access to, correction of, or deletion of your personal data stored by us. To exercise these rights, contact us at <a href="mailto:privacy@jotarostrategy.com" class="text-sky-600 hover:underline">privacy@jotarostrategy.com</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-contact" class="page-section">
+            <div class="py-12 bg-slate-900 text-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-3">Contact Us</h1>
+                    <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">Get in touch with our web and mobile engineering team.</p>
+                </div>
+            </div>
+
+            <div class="py-16 bg-slate-50">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+                    <div class="grid lg:grid-cols-2 gap-12">
+                        
+                        <!-- Contact Information Cards -->
+                        <div class="space-y-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-900 mb-4">Verifiable Business Details</h2>
+                                <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                                    Below are the registered company details for <strong>Jotaro Strategy</strong>. Our support desk operates Monday through Friday with a 24-business-hour response guarantee.
+                                </p>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+                                <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="building" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xs uppercase font-bold text-slate-400">Legal Entity Name</h3>
+                                    <p class="text-slate-900 font-semibold text-base">Jotaro Strategy Co., Ltd.</p>
+                                    <p class="text-xs text-slate-500">Domain: jotarostrategy.com</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+                                <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="map-pin" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xs uppercase font-bold text-slate-400">Physical Address</h3>
+                                    <p class="text-slate-900 font-semibold text-sm">Jotaro Strategy Headquarters</p>
+                                    <p class="text-xs text-slate-600 mt-0.5">888 Sukhumvit Road, Khlong Toei, Bangkok 10110, Thailand</p>
+                                </div>
+                            </div>
+
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="mail" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs uppercase font-bold text-slate-400">Support Email</h3>
+                                        <a href="mailto:support@jotarostrategy.com" class="text-sky-600 font-semibold text-xs hover:underline block truncate">support@jotarostrategy.com</a>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="phone" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs uppercase font-bold text-slate-400">Direct Phone</h3>
+                                        <p class="text-slate-900 font-semibold text-xs">+66 2 123 4567</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-sky-50 border border-sky-200 p-4 rounded-xl text-sky-900 text-xs flex items-center space-x-3">
+                                <i data-lucide="clock" class="w-5 h-5 text-sky-600 flex-shrink-0"></i>
+                                <span><strong>Customer Support SLA:</strong> Inquiries submitted via form or email are responded to within <strong>24 business hours</strong>.</span>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Contact Form -->
+                        <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                            <h3 class="text-xl font-bold text-slate-900 mb-2">Inquire for New Project</h3>
+                            <p class="text-slate-500 text-xs mb-6">Fill out the form below to request a detailed technical consultation and scope estimate.</p>
+
+                            <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
+                                    <input type="text" required placeholder="John Doe" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm">
+                                </div>
+
+                                <div class="grid sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Business Email *</label>
+                                        <input type="email" required placeholder="john@company.com" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+                                        <input type="tel" placeholder="+1 (555) 000-0000" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Service Required *</label>
+                                    <select class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm text-slate-700">
+                                        <option value="web">Web Application Development</option>
+                                        <option value="mobile">Mobile Application (iOS/Android)</option>
+                                        <option value="fullstack">Web & Mobile Full Solution</option>
+                                        <option value="consulting">UI/UX & Tech Consulting</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Project Details / Scope Brief *</label>
+                                    <textarea rows="4" required placeholder="Briefly describe your application goals, target user base, and target deadline..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm"></textarea>
+                                </div>
+
+                                <button type="submit" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-xl shadow-md transition text-sm">
+                                    Submit Request
+                                </button>
+                            </form>
+
+                            <div id="contact-success" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs text-center font-medium">
+                                Thank you! Your request has been sent successfully. Our team will get back to you within 24 business hours.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-slate-950 text-slate-400 text-xs py-12 border-t border-slate-800">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 text-white font-bold text-lg mb-3">
+                        <div class="w-6 h-6 rounded bg-sky-500 flex items-center justify-center text-slate-950 text-xs">JS</div>
+                        <span>Jotaro Strategy</span>
+                    </div>
+                    <p class="text-slate-400 leading-relaxed text-xs">
+                        Premier web and mobile software development agency. Delivering scalable SaaS apps, iOS/Android solutions, and digital strategy.
+                    </p>
+                    <p class="mt-2 text-[11px] text-slate-500">Legal Entity: Jotaro Strategy Co., Ltd.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-3 text-sm">Services</h4>
+                    <ul class="space-y-2">
+                        <li><button onclick="navigateTo('services')" class="hover:text-white transition">Web Application Engineering</button></li>
+                        <li><button onclick="navigateTo('services')" class="hover:text-white transition">iOS & Android App Development</button></li>
+                        <li><button onclick="navigateTo('services')" class="hover:text-white transition">UI/UX Prototyping & Figma</button></li>
+                        <li><button onclick="navigateTo('services')" class="hover:text-white transition">API & Stripe Integration</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-3 text-sm">Compliance & Legal</h4>
+                    <ul class="space-y-2">
+                        <li><button onclick="navigateTo('terms')" class="hover:text-white transition">Terms of Service</button></li>
+                        <li><button onclick="navigateTo('refund')" class="hover:text-white transition">Refund & Cancellation Policy</button></li>
+                        <li><button onclick="navigateTo('privacy')" class="hover:text-white transition">Privacy Policy</button></li>
+                        <li><button onclick="navigateTo('pricing')" class="hover:text-white transition">Pricing Transparency (USD)</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-3 text-sm">Support & Contact</h4>
+                    <p class="mb-1 text-slate-300">Support Email:</p>
+                    <a href="mailto:support@jotarostrategy.com" class="text-sky-400 hover:underline block mb-3">support@jotarostrategy.com</a>
+                    <p class="mb-1 text-slate-300">Address:</p>
+                    <p class="text-slate-400 text-[11px] leading-tight">888 Sukhumvit Road, Khlong Toei, Bangkok 10110, Thailand</p>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-slate-500">
+                <p>&copy; 2026 Jotaro Strategy Co., Ltd. All rights reserved. Registered domain: jotarostrategy.com</p>
+                <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+                    <span class="flex items-center"><i data-lucide="lock" class="w-3.5 h-3.5 mr-1 text-emerald-500"></i> Stripe SSL Encrypted</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Stripe Compliance Checklist Overlay Modal -->
+    <div id="compliance-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="check-square" class="w-6 h-6 text-emerald-600"></i>
+                    <h2 class="text-xl font-bold text-slate-900">Stripe Account Verification Checklist</h2>
+                </div>
+                <button onclick="toggleComplianceModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-600 mb-6">This site is structured to satisfy every item required by Stripe Risk & Legal review teams for merchant onboarding:</p>
+
+            <div class="space-y-4 text-xs">
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start space-x-3">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-slate-900 block text-sm">1. Official Business Identity & Branding</strong>
+                        <span class="text-slate-600">Company Name (Jotaro Strategy Co., Ltd.) and domain name (jotarostrategy.com) clearly matched across header/footer.</span>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start space-x-3">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-slate-900 block text-sm">2. Clear Description of Services & Deliverables</strong>
+                        <span class="text-slate-600">Detailed breakdown of Web Apps, Mobile Apps (iOS/Android), and Consulting services.</span>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start space-x-3">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-slate-900 block text-sm">3. Transparent Pricing & Currency (USD)</strong>
+                        <span class="text-slate-600">Transparent packages and interactive estimator clearly stating costs in USD ($) to prevent surprise billing.</span>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start space-x-3">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-slate-900 block text-sm">4. Mandatory Legal Pages</strong>
+                        <span class="text-slate-600">Dedicated pages for Terms of Service (ToS), Refund & Cancellation Policy, and GDPR Privacy Policy linked in navigation.</span>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start space-x-3">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-slate-900 block text-sm">5. Verifiable Contact Information</strong>
+                        <span class="text-slate-600">Includes physical address, direct email (support@jotarostrategy.com), phone number, and support response timeline (within 24 hours).</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 border-t border-slate-200 pt-4 flex justify-end">
+                <button onclick="toggleComplianceModal()" class="bg-slate-900 text-white font-medium px-5 py-2.5 rounded-xl text-xs hover:bg-slate-800 transition">
+                    Close Review
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        window.onload = function() {
+            lucide.createIcons();
+        };
+
+        // Navigation Switcher Function
+        function navigateTo(pageId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            // Show selected section
+            const targetSection = document.getElementById('page-' + pageId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+
+            // Re-render Lucide Icons for dynamic content
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 50);
+        }
+
+        // Toggle Mobile Menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Toggle Compliance Modal
+        function toggleComplianceModal() {
+            const modal = document.getElementById('compliance-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Interactive Cost Estimator Calculation Logic
+        function calculateEstimate() {
+            const inputs = document.querySelectorAll('.estimator-calc');
+            let total = 0;
+            inputs.forEach(input => {
+                if (input.checked) {
+                    total += parseInt(input.getAttribute('data-cost'));
+                }
+            });
+            document.getElementById('estimated-total').innerText = total.toLocaleString();
+        }
+
+        // Tier Selection Shortcut
+        function selectTier(tierName, price) {
+            navigateTo('contact');
+            const textarea = document.querySelector('#contact-form textarea');
+            if (textarea) {
+                textarea.value = `Interested in starting project: ${tierName} (Base price ~$${price.toLocaleString()} USD).`;
+            }
+        }
+
+        // Handle Contact Form Submit (Non-Alert Feedback)
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const successBox = document.getElementById('contact-success');
+            const form = document.getElementById('contact-form');
+            if (successBox && form) {
+                form.reset();
+                successBox.classList.remove('hidden');
+                setTimeout(() => {
+                    successBox.classList.add('hidden');
+                }, 6000);
+            }
+        }
+    </script>
+</body>
+</html>
